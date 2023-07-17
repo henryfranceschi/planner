@@ -1,6 +1,6 @@
 create table "users"
 (
-    "id"            uuid        not null default uuid_generate_v4(),
+    "id"            uuid        not null default gen_random_uuid(),
     "email_address" text        not null,
     "password_hash" text        not null,
 
@@ -14,4 +14,4 @@ create table "users"
     unique("email_address")
 );
 
-select trigger_updated_at("users");
+select trigger_updated_at('"users"');
