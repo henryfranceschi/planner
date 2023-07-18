@@ -6,8 +6,6 @@ diesel::table! {
         first_name -> Text,
         last_name -> Text,
         description -> Nullable<Text>,
-        image_uri -> Nullable<Text>,
-        cover_uri -> Nullable<Text>,
         user_id -> Uuid,
         created_at -> Timestamptz,
         updated_at -> Nullable<Timestamptz>,

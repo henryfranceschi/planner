@@ -4,8 +4,6 @@ create table "profiles"
     "first_name"    text        not null,
     "last_name"     text        not null,
     "description"   text,
-    "image_uri"     text,
-    "cover_uri"     text,
     
     -- Relations
     "user_id"       uuid        not null,
