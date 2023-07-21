@@ -1,6 +1,16 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
+    clients (id) {
+        id -> Uuid,
+        name -> Text,
+        description -> Nullable<Text>,
+        created_at -> Timestamptz,
+        updated_at -> Nullable<Timestamptz>,
+    }
+}
+
+diesel::table! {
     profiles (id) {
         id -> Uuid,
         first_name -> Text,
@@ -25,6 +35,7 @@ diesel::table! {
 diesel::joinable!(profiles -> users (user_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
+    clients,
     profiles,
     users,
 );
