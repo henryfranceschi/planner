@@ -23,6 +23,26 @@ diesel::table! {
 }
 
 diesel::table! {
+    projects (id) {
+        id -> Uuid,
+        name -> Text,
+        description -> Nullable<Text>,
+        archived -> Bool,
+        client_id -> Uuid,
+        created_at -> Timestamptz,
+        updated_at -> Nullable<Timestamptz>,
+    }
+}
+
+diesel::table! {
+    projects_users (project_id, user_id) {
+        project_id -> Uuid,
+        user_id -> Uuid,
+        created_at -> Timestamptz,
+    }
+}
+
+diesel::table! {
     users (id) {
         id -> Uuid,
         email_address -> Text,
@@ -33,9 +53,14 @@ diesel::table! {
 }
 
 diesel::joinable!(profiles -> users (user_id));
+diesel::joinable!(projects -> clients (client_id));
+diesel::joinable!(projects_users -> projects (project_id));
+diesel::joinable!(projects_users -> users (user_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     clients,
     profiles,
+    projects,
+    projects_users,
     users,
 );
