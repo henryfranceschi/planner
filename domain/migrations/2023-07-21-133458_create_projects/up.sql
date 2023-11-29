@@ -6,7 +6,7 @@ create table "projects"
     "archived"          boolean     not null default false,
 
     -- Relations
-    "client_id"         uuid        not null,
+    "client_id"         uuid,
 
     -- Timestamps
     "created_at"        timestamptz not null default now(),

@@ -28,7 +28,7 @@ diesel::table! {
         name -> Text,
         description -> Nullable<Text>,
         archived -> Bool,
-        client_id -> Uuid,
+        client_id -> Nullable<Uuid>,
         created_at -> Timestamptz,
         updated_at -> Nullable<Timestamptz>,
     }

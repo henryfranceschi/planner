@@ -11,7 +11,7 @@ pub struct Project {
     pub name: String,
     pub description: Option<String>,
     archived: bool,
-    client_id: Uuid,
+    client_id: Option<Uuid>,
 }
 
 impl Project {
@@ -19,7 +19,7 @@ impl Project {
         self.id
     }
 
-    pub fn client_id(&self) -> Uuid {
+    pub fn client_id(&self) -> Option<Uuid> {
         self.client_id
     }
 
