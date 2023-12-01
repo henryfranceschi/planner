@@ -1,13 +1,16 @@
 use chrono::{DateTime, Utc};
 use diesel::helper_types::{AsSelect, Find, FindBy, InnerJoin, Select};
+use diesel::pg::Pg;
 use diesel::prelude::*;
 use uuid::Uuid;
 
+use crate::error::DomainError;
 use crate::model::user::User;
 use crate::schema::{projects, tasks, tasks_users, users};
 
-#[derive(Queryable, Identifiable, Selectable)]
+#[derive(Queryable, Insertable, Identifiable, Selectable)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
+#[diesel(belongs_to(Project))]
 pub struct Task {
     id: Uuid,
     pub name: String,
@@ -17,19 +20,17 @@ pub struct Task {
     project_id: Uuid,
 }
 
-type RelatedUsers = Select<
-    InnerJoin<FindBy<tasks_users::table, tasks_users::task_id, Uuid>, users::table>,
-    AsSelect<User, diesel::pg::Pg>,
->;
+type TaskUsersJoin = InnerJoin<FindBy<tasks_users::table, tasks_users::task_id, Uuid>, users::table>;
+type RelatedUsers = Select<TaskUsersJoin, AsSelect<User, diesel::pg::Pg>>;
 
 impl Task {
-    fn new(
+    pub fn new(
         name: String,
         description: Option<String>,
         deadline: Option<DateTime<Utc>>,
+        done: bool,
         project_id: Uuid,
-    ) -> anyhow::Result<Self> {
-
+    ) -> Result<Self, DomainError> {
         if let Some(deadline) = deadline {
             Self::validate_deadline(&deadline)?;
         }
@@ -39,7 +40,7 @@ impl Task {
             name,
             description,
             deadline,
-            done: false,
+            done,
             project_id,
         })
     }
@@ -52,20 +53,26 @@ impl Task {
         self.deadline
     }
 
-    fn validate_deadline(deadline: &DateTime<Utc>) -> anyhow::Result<()> {
+    pub fn set_deadline(&mut self, deadline: Option<DateTime<Utc>>) -> Result<(), DomainError> {
+        if let Some(deadline) = deadline {
+            Self::validate_deadline(&deadline)?;
+        }
+
+        self.deadline = deadline;
+
+        Ok(())
+    }
+
+    fn validate_deadline(deadline: &DateTime<Utc>) -> Result<(), DomainError> {
         if deadline < &Utc::now() {
-            anyhow::bail!("deadline cannot be in the past.");
+            Err(DomainError::Validation {
+                model: "Task".to_string(),
+                field: "deadline".to_string(),
+                message: "cannot be in the past.".to_string(),
+            })
         } else {
             Ok(())
         }
-    }
-
-    pub fn set_deadline(&mut self, deadline: DateTime<Utc>) -> anyhow::Result<()> {
-        Self::validate_deadline(&deadline)?;
-
-        self.deadline = Some(deadline);
-
-        Ok(())
     }
 
     pub fn done(&self) -> bool {

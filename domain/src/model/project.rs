@@ -1,10 +1,14 @@
+use diesel::dsl::exists;
+use diesel::expression::exists::Exists;
+use diesel::helper_types::BareSelect;
+use diesel::pg::Pg;
 use diesel::prelude::*;
 use uuid::Uuid;
 
 use crate::model::user::User;
 use crate::schema::{projects, projects_users};
 
-#[derive(Queryable, Identifiable, Selectable)]
+#[derive(Queryable, Insertable, Identifiable, Selectable)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Project {
     id: Uuid,
@@ -15,6 +19,21 @@ pub struct Project {
 }
 
 impl Project {
+    pub fn new(
+        name: String,
+        description: Option<String>,
+        archived: bool,
+        client_id: Option<Uuid>,
+    ) -> Self {
+        Self {
+            id: Uuid::new_v4(),
+            name,
+            description,
+            archived,
+            client_id,
+        }
+    }
+
     pub fn id(&self) -> Uuid {
         self.id
     }
