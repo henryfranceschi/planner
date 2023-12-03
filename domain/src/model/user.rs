@@ -1,20 +1,20 @@
 use std::sync::Arc;
 
 use anyhow::anyhow;
-use argon2::{
-    password_hash::{rand_core::OsRng, PasswordHashString, SaltString},
-    Argon2, PasswordHasher, PasswordVerifier,
-};
+use argon2::password_hash::rand_core::OsRng;
+use argon2::password_hash::{PasswordHashString, SaltString};
+use argon2::{Argon2, PasswordHasher, PasswordVerifier};
+use diesel::pg::Pg;
+use diesel::prelude::*;
 use diesel::{
-    backend::Backend, deserialize::FromSql, prelude::*, serialize::ToSql, AsExpression, FromSqlRow,
-    SqlType,
+    backend::Backend, deserialize::FromSql, serialize::ToSql, AsExpression, FromSqlRow, SqlType,
 };
 use uuid::Uuid;
 
 use crate::schema::users;
 
-#[derive(Queryable, Selectable)]
-#[diesel(check_for_backend(diesel::pg::Pg))]
+#[derive(Queryable, Insertable, Selectable, Identifiable)]
+#[diesel(check_for_backend(Pg))]
 pub struct User {
     id: Uuid,
     pub email_address: String,
