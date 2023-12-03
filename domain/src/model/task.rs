@@ -5,11 +5,11 @@ use diesel::prelude::*;
 use uuid::Uuid;
 
 use crate::error::DomainError;
-use crate::model::user::User;
+use crate::model::{Project, User};
 use crate::schema::{projects, tasks, tasks_users, users};
 
-#[derive(Queryable, Insertable, Identifiable, Selectable)]
-#[diesel(check_for_backend(diesel::pg::Pg))]
+#[derive(Queryable, Insertable, Selectable, Identifiable, Associations)]
+#[diesel(check_for_backend(Pg))]
 #[diesel(belongs_to(Project))]
 pub struct Task {
     id: Uuid,

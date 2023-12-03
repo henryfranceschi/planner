@@ -1,6 +1,3 @@
-use diesel::dsl::exists;
-use diesel::expression::exists::Exists;
-use diesel::helper_types::BareSelect;
 use diesel::pg::Pg;
 use diesel::prelude::*;
 use uuid::Uuid;
@@ -8,8 +5,8 @@ use uuid::Uuid;
 use crate::model::user::User;
 use crate::schema::{projects, projects_users};
 
-#[derive(Queryable, Insertable, Identifiable, Selectable)]
-#[diesel(check_for_backend(diesel::pg::Pg))]
+#[derive(Queryable, Insertable, Selectable, Identifiable)]
+#[diesel(check_for_backend(Pg))]
 pub struct Project {
     id: Uuid,
     pub name: String,
@@ -50,12 +47,12 @@ impl Project {
     }
 }
 
-#[derive(Queryable, Identifiable, Associations, Selectable)]
+#[derive(Queryable, Identifiable, Selectable, Associations)]
+#[diesel(check_for_backend(Pg))]
 #[diesel(belongs_to(Project))]
 #[diesel(belongs_to(User))]
 #[diesel(table_name = projects_users)]
 #[diesel(primary_key(project_id, user_id))]
-#[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct ProjectUser {
     project_id: Uuid,
     user_id: Uuid,
