@@ -27,6 +27,7 @@ diesel::table! {
         id -> Uuid,
         name -> Text,
         description -> Nullable<Text>,
+        public -> Bool,
         archived -> Bool,
         client_id -> Nullable<Uuid>,
         created_at -> Timestamptz,

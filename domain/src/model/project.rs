@@ -14,6 +14,7 @@ pub struct Project {
     id: Uuid,
     pub name: String,
     pub description: Option<String>,
+    public: bool,
     archived: bool,
     client_id: Option<Uuid>,
 }
@@ -22,6 +23,7 @@ impl Project {
     pub fn new(
         name: String,
         description: Option<String>,
+        public: bool,
         archived: bool,
         client_id: Option<Uuid>,
     ) -> Self {
@@ -29,6 +31,7 @@ impl Project {
             id: Uuid::new_v4(),
             name,
             description,
+            public,
             archived,
             client_id,
         }

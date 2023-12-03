@@ -3,6 +3,7 @@ create table "projects"
     "id"                uuid        not null default gen_random_uuid(),
     "name"              text        not null,
     "description"       text,
+    "public"            boolean     not null default false,
     "archived"          boolean     not null default false,
 
     -- Relations
